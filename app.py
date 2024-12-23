@@ -60,6 +60,7 @@ def home():
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
                 margin-top: 20px;
                 min-height: 500px;
+                height: 800px;
                 overflow: visible;
                 flex: 1;
             }}
@@ -78,7 +79,7 @@ def home():
             }}
             .card-body {{
                 display: flex;
-                justify-content: space-between;
+                justify-content: center;
                 align-items: center;
             }}
         </style>
@@ -104,7 +105,7 @@ def home():
             function loadGraph(name) {{
                 const graphContainer = document.getElementById('graphContainer');
                 const graphContent = document.getElementById('graphContent');
-                graphContent.innerHTML = `<iframe src='/visualization/${{name}}' style='width: 600px; height: 400px; overflow:visible; margin-left: auto; margin-right: auto; display: block; border: none;'></iframe>`;
+                graphContent.innerHTML = `<iframe src='/visualization/${{name}}' style='width: 800px; height: 600px; overflow:visible; display: block; border: none;'></iframe>`;
                 graphContainer.style.display = 'block';
             }}
         </script>
