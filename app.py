@@ -43,7 +43,7 @@ def home():
                 background-color: #f8f9fa;
                 padding: 20px;
                 height:100vh;
-                overflow:hidden;
+                overflow:auto;
             }}
             .container-fluid {{
                 max-width: 1200px;
