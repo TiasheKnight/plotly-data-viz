@@ -13,7 +13,7 @@ VISUALIZATIONS = {
     "Scatter plot": "scatter_plot.html",
     "World map": "world_map.html",
     "Taiwan map": "taiwan_map.html",
-    "Value matrix": "value_matrix.html",
+    "Bargraph": "bargraph.html",
 }
 
 # Route for home page
