@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+    </head>
+    <body>
+        <div id="myGraph"></div>
+        <script src="//unpkg.com/d3"></script>
+        <script src="https://cdn.plot.ly/plotly-2.24.1.min.js" ></script>
+        <script src="{{ url_for('static', filename='js/data.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/world_map.js') }}"></script>
+    </body>
+</html>

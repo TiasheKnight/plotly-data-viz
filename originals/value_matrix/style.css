@@ -1,0 +1,14 @@
+#row{
+    display: flex;
+}
+.column{
+    flex: 33%;
+    height: 400px;
+    padding: 10px;
+    border: 1px solid #000;
+}
+/* #myGraph{
+    width: 600px;
+    height: 400px;
+    border: 1px solid #000;
+} */
