@@ -45,7 +45,7 @@ function drawLineChart(res){
     let trace1 = {
         x: binCenters,
         y: binContents,
-        type: 'bar',       // Bar plot mimicking histogram bin content
+        type: 'bar',       // Bar plot mimicking bar_chart bin content
         width: 1
     };
 

@@ -1,15 +1,167 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title></title>
-        <link rel="stylesheet" href="../static/css/style.css">
-    </head>
-    <body>
-        <script src="//unpkg.com/d3"></script>
-        <div id="row">
-            <div id="myGraph" class="column"></div>
+  <head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link rel="stylesheet" type="text/css" href="../static/css/style.css" />
+  </head>
+  <body>
+    <script src="//unpkg.com/d3"></script>
+    <div class="container mt-3">
+      <div class="row mb-3">
+        <!-- Dropdown Selector for Country/Region -->
+        <div class="col-md-12" style="width:500px;">
+          <label>Select Country:</label>
+        <select id="countrySelector" class="form-select">
+          <!-- Other options will be populated dynamically from the CSV -->
+        </select>
         </div>
+      </div>
+        <div class="row mb-3">
+          <!-- Year selector -->
+          <div class="col-md-12" style="width:500px;">
+            <label>Select Year:</label>
+          <input
+            type="number"
+            id="YearSelect"
+            class="form-control"
+            placeholder="Year"
+            style="width: 48%;"
+            value="2023"
+            min="1950"
+            max="2023"
+            onchange="updateSliderFromInputs()"
+          />
+        </div>
+          </div>
+        <!-- Dropdown for Gender -->
+        <!-- <div class="col-md-4">
+          <label for="genderSelector" class="form-label">Select Gender</label>
+          <select id="genderSelector" class="form-select">
+            <option value="Not Specified">Not Specified</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+        </div> -->
+      </div>
+      <!-- Range Selector for Age -->
+      <div class="col-md-12" style="width:500px;">
+        <label for="ageRangeSlider" class="form-label">Select Age Range:</label>
+        <div id="ageRangeSlider" class="mt-2"></div>
+        <div class="d-flex justify-content-between mt-2">
+          <input
+            type="number"
+            id="ageRangeLow"
+            class="form-control"
+            placeholder="Age Low"
+            style="width: 48%;"
+            value="0"
+            min="0"
+            max="100"
+            onchange="updateSliderFromInputs()"
+          />
+        <input
+          type="number"
+          id="ageRangeHigh"
+          class="form-control"
+          placeholder="Age High"
+          style="width: 48%;"
+          value="100"
+          min="0"
+          max="100"
+          onchange="updateSliderFromInputs()"
+        />
+        </div>
+      </div>  
+      <div class="row mb-3">
+        <!-- Search Button -->
+        <div class="col-md-12 text-center">
+          <button id="searchButton" class="btn btn-primary mt-3">Search</button>
+        </div>
+      </div>
+      <div id="myGraph" class="column"></div>
+    </div>
+    <script>
+      document
+        .getElementById("searchButton")
+        .addEventListener("click", function () {
+          const country = document.getElementById("countrySelector").value;
+          const year = document.getElementById("YearSelect").value; 
+          // const gender = document.getElementById("genderSelector").value;
+          const gender = null;
+          const ageLow = document.getElementById("ageRangeLow").value;
+          const ageHigh = document.getElementById("ageRangeHigh").value;
+
+          console.log("Selected Country:", country);
+          console.log("Selected Year:", year);
+          console.log("Selected Gender:", gender);
+          console.log("Age Range:", ageLow, "-", ageHigh);
+
+          // Call visualization rendering function with selected filters
+          renderVisualization(country, gender, ageLow, ageHigh,year);
+        });
+    </script>
+    <!-- Include the D3.js library -->
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+
+    <script>
+      // Load the CSV file and populate the select dropdown
+      d3.csv("../static/data/regions.csv").then(function(data) {
+        const countrySelector = document.getElementById("countrySelector");
+        
+        // Loop through the CSV data and extract the 'area' column
+        const areas = Array.from(new Set(data.map(row => row['Region, subregion, country or area *']))); // Get unique 'area' values
+        
+        // Populate the dropdown with 'World' as the default
+        areas.forEach(function(area) {
+          const option = document.createElement("option");
+          option.value = area;
+          option.textContent = area;
+          countrySelector.appendChild(option);
+        });
+      }).catch(function(error) {
+        console.error("Error loading CSV file:", error);
+      });
+    </script>
+    <!-- Include noUiSlider Library -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.0/nouislider.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.6.0/nouislider.min.js"></script>
+
+    <script>
+      const ageRangeSlider = document.getElementById("ageRangeSlider");
+      const ageLowInput = document.getElementById("ageRangeLow");
+      const ageHighInput = document.getElementById("ageRangeHigh");
+
+      noUiSlider.create(ageRangeSlider, {
+        start: [0, 100],
+        connect: true,
+        range: {
+          min: 0,
+          max: 100,
+        },
+        step: 1,
+      });
+
+      // Update input fields when slider values change
+      ageRangeSlider.noUiSlider.on("update", (values) => {
+        ageLowInput.value = Math.round(values[0]);
+        ageHighInput.value = Math.round(values[1]);
+      });
+
+      // Update slider when input fields are changed
+      function updateSliderFromInputs() {
+        const low = parseInt(ageLowInput.value) || 0;
+        const high = parseInt(ageHighInput.value) || 100;
+        ageRangeSlider.noUiSlider.set([low, high]);
+      }
+    </script>
+    <script
+      src="https://cdn.plot.ly/plotly-2.35.2.min.js"
+      charset="utf-8"
+    ></script>
         <script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
         <script src="../static/js/box_plot.js"></script>
     </body>

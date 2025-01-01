@@ -4,21 +4,21 @@ function unpack(rows, key) {
     return row[key];
   });
 }
-
-function drawPieCharts(data) {
+var myPlot = document.getElementById('myGraph');
+function drawPieCharts(res,loc='World',gender=null,ageLow=0,ageHigh=100,year=2023) {
   let countryField = "Region, subregion, country or area *";
   let yearField = "Year";
   let maleDeathsField = "Male Deaths (thousands)";
   let femaleDeathsField = "Female Deaths (thousands)";
 
   // 过滤出2024年的数据
-  let data2023 = data.filter((row) => row[yearField] === "2023");
+  let data = res.filter((row) => row[yearField] === year.toString());
 
   // 检查是否成功过滤出2024年数据
-  console.log("Data for 2023:", data2023);
+  console.log("Data for "+year+':', data);
 
   // 获取所有国家的列表
-  let countries = [...new Set(unpack(data2023, countryField))];
+  let countries = [...new Set(unpack(data, countryField))];
 
   // 创建 traces 列表
   let traces = [];
@@ -29,43 +29,43 @@ function drawPieCharts(data) {
 
   countries.forEach((country, idx) => {
     // 过滤出当前国家的数据
-    let countryData = data2023.filter((row) => row[countryField] === country);
+    if (country==loc){
+      let countryData = data.filter((row) => row[countryField] === country);
 
-    // 如果当前国家的数据存在
-    if (countryData.length > 0) {
-      let maleDeaths = parseFloat(countryData[0][maleDeathsField]) || 0;
-      let femaleDeaths = parseFloat(countryData[0][femaleDeathsField]) || 0;
-      let totalDeaths = maleDeaths + femaleDeaths; // 计算总死亡人数
+      // 如果当前国家的数据存在
+      if (countryData.length > 0) {
+        let maleDeaths = parseFloat(countryData[0][maleDeathsField]) || 0;
+        let femaleDeaths = parseFloat(countryData[0][femaleDeathsField]) || 0;
+        let totalDeaths = maleDeaths + femaleDeaths; // 计算总死亡人数
 
-      // 计算男性和女性死亡人数的占比
-      let malePercentage = (maleDeaths / totalDeaths) * 100;
-      let femalePercentage = (femaleDeaths / totalDeaths) * 100;
+        // 计算男性和女性死亡人数的占比
+        let malePercentage = (maleDeaths / totalDeaths) * 100;
+        let femalePercentage = (femaleDeaths / totalDeaths) * 100;
 
-      // 创建一个圆饼图的 trace
-      let pieTrace = {
-        type: "pie",
-        labels: ["Male Deaths", "Female Deaths"],
-        values: [maleDeaths, femaleDeaths],
-        textinfo: "label+percent", // 显示标签和占比
-        insidetextorientation: "radial",
-        domain: { row: idx, column: 0 }, // 将图表放在第 idx 行第 1 列
-        name: `${country} Deaths`,
-      };
+        // 创建一个圆饼图的 trace
+        let pieTrace = {
+          type: "pie",
+          labels: ["Male Deaths", "Female Deaths"],
+          values: [maleDeaths, femaleDeaths],
+          textinfo: "label+percent", // 显示标签和占比
+          insidetextorientation: "radial",
+          domain: { row: idx, column: 0 }, // 将图表放在第 idx 行第 1 列
+          name: `${country} Deaths`,
+        };
 
-      traces.push(pieTrace);
-    }
+        traces.push(pieTrace);
+      }
+    };
   });
 
   // 配置图表布局
   let layout = {
-    title: "Deaths by Gender in 2024",
-    grid: { rows: rows, columns: cols }, // 每个国家一个圆饼图
-    height: rows * 400, // 动态设置高度，确保有足够空间显示
+    title: "Deaths by Gender in "+loc+' in '+ year,
     showlegend: false, // 不显示图例
   };
 
   // 绘制图表
-  Plotly.newPlot("myGraph", traces, layout);
+  Plotly.newPlot(myPlot, traces, layout);
 }
 
 d3.csv("../static/data/WPP2024_GEN_F01_DEMOGRAPHIC_INDICATORS_COMPACT.csv")
@@ -76,3 +76,12 @@ d3.csv("../static/data/WPP2024_GEN_F01_DEMOGRAPHIC_INDICATORS_COMPACT.csv")
   .catch((error) => {
     console.error("Error loading CSV:", error); // 如果 CSV 加载失败，输出错误信息
   });
+  function renderVisualization(country, gender, ageLow, ageHigh, year){
+    d3.csv('../static/data/WPP2024_GEN_F01_DEMOGRAPHIC_INDICATORS_COMPACT.csv').then(
+        res => {
+            console.log(res);
+            drawPieCharts(res, country, gender, ageLow, ageHigh, year);
+        }
+    );
+    
+};

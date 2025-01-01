@@ -11,18 +11,15 @@
       <div class="row mb-3">
         <!-- Dropdown Selector for Country/Region -->
         <div class="col-md-12" style="width:500px;">
-          <div id="location">
-            <label>Select Country:</label>
-          <select id="countrySelector" class="form-select">
-            <!-- Other options will be populated dynamically from the CSV -->
-          </select>
-         </div>
+          <label>Select Country:</label>
+        <select id="countrySelector" class="form-select">
+          <!-- Other options will be populated dynamically from the CSV -->
+        </select>
         </div>
       </div>
         <div class="row mb-3">
           <!-- Year selector -->
           <div class="col-md-12" style="width:500px;">
-            <div id="years">
             <label>Select Year:</label>
           <input
             type="number"
@@ -35,7 +32,6 @@
             max="2023"
             onchange="updateSliderFromInputs()"
           />
-        </div>
         </div>
           </div>
         <!-- Dropdown for Gender -->
@@ -50,33 +46,31 @@
       </div>
       <!-- Range Selector for Age -->
       <div class="col-md-12" style="width:500px;">
-        <div id="ageRange">
-          <label for="ageRangeSlider" class="form-label">Select Age Range:</label>
-          <div id="ageRangeSlider" class="mt-2"></div>
-          <div class="d-flex justify-content-between mt-2">
-            <input
-              type="number"
-              id="ageRangeLow"
-              class="form-control"
-              placeholder="Age Low"
-              style="width: 48%;"
-              value="0"
-              min="0"
-              max="100"
-              onchange="updateSliderFromInputs()"
-            />
+        <label for="ageRangeSlider" class="form-label">Select Age Range:</label>
+        <div id="ageRangeSlider" class="mt-2"></div>
+        <div class="d-flex justify-content-between mt-2">
           <input
             type="number"
-            id="ageRangeHigh"
+            id="ageRangeLow"
             class="form-control"
-            placeholder="Age High"
+            placeholder="Age Low"
             style="width: 48%;"
-            value="100"
+            value="0"
             min="0"
             max="100"
             onchange="updateSliderFromInputs()"
           />
-          </div>
+        <input
+          type="number"
+          id="ageRangeHigh"
+          class="form-control"
+          placeholder="Age High"
+          style="width: 48%;"
+          value="100"
+          min="0"
+          max="100"
+          onchange="updateSliderFromInputs()"
+        />
         </div>
       </div>  
       <div class="row mb-3">
@@ -88,12 +82,6 @@
       <div id="myGraph" class="column"></div>
     </div>
     <script>
-          //disable unused variables
-          document.getElementById("years").style.display = "none";
-          document.getElementById("location").style.display = "none";
-          document.getElementById("searchButton").style.display = "none";
-          document.getElementById("ageRange").style.display = "none";
-
       document
         .getElementById("searchButton")
         .addEventListener("click", function () {
@@ -103,7 +91,6 @@
           const gender = null;
           const ageLow = document.getElementById("ageRangeLow").value;
           const ageHigh = document.getElementById("ageRangeHigh").value;
-
 
           console.log("Selected Country:", country);
           console.log("Selected Year:", year);
@@ -175,6 +162,7 @@
       src="https://cdn.plot.ly/plotly-2.35.2.min.js"
       charset="utf-8"
     ></script>
-        <script src="../static/js/taiwan_map.js"></script>
+
+        <script src="../static/js/bar_chart.js"></script>
     </body>
 </html>

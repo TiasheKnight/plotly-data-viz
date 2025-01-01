@@ -1,7 +1,7 @@
 d3.csv('../static/data/WPP2024_GEN_F01_DEMOGRAPHIC_INDICATORS_COMPACT.csv').then(
     res => {
         console.log(res);
-        drawLineChart(res);
+        drawBarChart(res);
     }
 );
 
@@ -10,8 +10,8 @@ function unpack(rows, key) {
         return row[key];
     });
 }
-
-function drawLineChart(data){
+var myPlot = document.getElementById('myGraph');
+function drawBarChart(data,loc='World',gender=null,ageLow=0,ageHigh=100,year=2023){
 
     let countries = [...new Set(unpack(data, 'Region, subregion, country or area *'))];
     
@@ -46,5 +46,6 @@ function drawLineChart(data){
     };
 
     // 绘制图表
-    Plotly.newPlot('myGraph', traces, layout);
+    Plotly.newPlot(myPlot, traces, layout);
 }
+

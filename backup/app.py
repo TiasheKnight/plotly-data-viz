@@ -7,7 +7,7 @@ app = Flask(__name__)
 # Define base directory for visualizations
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 VISUALIZATIONS = {
-    "Line chart": "line_chart.html",
+    "Bar_chart": "bar_chart.html",
     "Pie chart": "pie_chart.html",
     "Box plot": "box_plot.html",
     "Umbrella point map": "umbrella_point_map.html",

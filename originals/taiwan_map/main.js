@@ -86,3 +86,21 @@ function draw_map(died_data, geo_data) {
 
     Plotly.newPlot("myGraph", data, layout);
 }
+
+document.getElementById('myGraph').on('plotly_click', function(eventData) {
+    const country = eventData.points[0].location; // Assuming `location` contains the country code or name
+    fetch('/country-click', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ country: country }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        Alert(data.message || data.error);
+    })
+    .catch(error => {
+        Alert('Error:', error);
+    });
+});

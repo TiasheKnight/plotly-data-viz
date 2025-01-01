@@ -1,7 +1,7 @@
 d3.csv("../static/data/WPP2024_GEN_F01_DEMOGRAPHIC_INDICATORS_COMPACT.csv").then(
     res => {
         console.log(res);
-        drawLineChart(res);
+        drawScatterPlot(res);
     }
 );
 
@@ -10,8 +10,8 @@ function unpack(rows,key){
         return row[key];
     });
 }
-
-function drawLineChart(res){
+var myPlot = document.getElementById('myGraph');
+function drawScatterPlot(res,loc='World',gender=null,ageLow=0,ageHigh=100,year=2023){
     let nTaiwan=0;
     let notTaiwan=0;
     let years = [];
@@ -22,8 +22,6 @@ function drawLineChart(res){
     console.log(D);
     console.log(R);
     console.log(T);
-
-    let loc = "Europe and Northern America";
 
     for (let i=0; i<D.length; i++){
         if (R[i] == loc){
@@ -83,5 +81,14 @@ function drawLineChart(res){
     
     };
 
-    Plotly.newPlot("myGraph", data, layout);
+    Plotly.newPlot(myPlot, data, layout);
 }
+function renderVisualization(country, gender, ageLow, ageHigh, year){
+    d3.csv('../static/data/WPP2024_GEN_F01_DEMOGRAPHIC_INDICATORS_COMPACT.csv').then(
+        res => {
+            console.log(res);
+            drawScatterPlot(res, country, gender, ageLow, ageHigh, year);
+        }
+    );
+    
+};
