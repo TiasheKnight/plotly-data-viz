@@ -16,13 +16,17 @@ VISUALIZATIONS = {
     "World Map": "world_map.html",
 }
 
+
 @app.route('/')
 def home():
     return render_template('dashboard.html')
 
+
 @app.route('/dashboard')
 def dashboard():
     return render_template('dashboard.html')
+
+
 # Route for home page
 @app.route('/chart')
 def chart():
@@ -36,7 +40,7 @@ def chart():
             </div>
         </div>
     """ for name in VISUALIZATIONS.keys())
-    
+
     return f"""
     <!DOCTYPE html>
     <html lang='en'>
@@ -167,6 +171,7 @@ def chart():
     </html>
     """
 
+
 # Dynamic route for visualizations
 @app.route('/visualization/<name>')
 def visualization(name):
@@ -176,7 +181,7 @@ def visualization(name):
             return f.read()
     else:
         return "Visualization not found", 404
-    
+
 
 @app.route('/country-click', methods=['POST'])
 def country_click():
@@ -187,32 +192,46 @@ def country_click():
     else:
         return jsonify({'error': 'No country provided'}), 400
 
+
 @app.route('/histogram')
 def histogram():
     return render_template('histogram.html')
+
 
 @app.route('/box_plot')
 def box_plot():
     return render_template('box_plot.html')
 
+
 @app.route('/bar_chart')
 def bar_chart():
     return render_template('bar_chart.html')
+
 
 @app.route('/pie_chart')
 def pie_chart():
     return render_template('pie_chart.html')
 
+
 @app.route('/scatter_plot')
 def scatter_plot():
     return render_template('scatter_plot.html')
 
+
 @app.route('/taiwan_map')
 def taiwan_map():
     return render_template('taiwan_map.html')
+
+
 @app.route('/world_map')
 def world_map():
     return render_template('world_map.html')
+
+
+@app.route('/taiwan')
+def taiwan():
+    return render_template('taiwan.html')
+
 
 @app.route('/point-click', methods=['POST'])
 def point_click():
@@ -221,6 +240,7 @@ def point_click():
     y = data.get('y')
     return jsonify({'message': f'Point clicked at x: {x}, y: {y}'})
 
+
 # Run the app
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(port=5001, debug=True)

@@ -72,7 +72,6 @@
           aria-expanded="false"
           aria-label="Toggle navigation"
         >
-        
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
@@ -83,13 +82,16 @@
             <li class="nav-item">
               <a class="nav-link" href="/chart">Chart View</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/taiwan">Taiwan</a>
+            </li>
           </ul>
         </div>
       </div>
     </nav>
 
     <!-- Main Content Area -->
-    <div id='mc' class="container my-4">
+    <div id="mc" class="container my-4">
       <div class="row">
         <!-- Left Column (World Map) -->
         <div style="width: 40%; height: 50px">
@@ -128,7 +130,19 @@
     <footer>
       <p>Data Visualization Team 7</p>
     </footer>
-    <button id='reset' style="position:fixed; width:auto; bottom:5px; right: 10px; display:none" onClick="window.location.reload();">Reset Dashboard</button>
+    <button
+      id="reset"
+      style="
+        position: fixed;
+        width: auto;
+        bottom: 5px;
+        right: 10px;
+        display: none;
+      "
+      onClick="window.location.reload();"
+    >
+      Reset Dashboard
+    </button>
     <!-- Bootstrap JS and dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
@@ -144,30 +158,32 @@
     <script>
       // The function that starts listening for changes after a delay
       function timeout() {
-          // Select the element where changes might occur
-          const targetNode = document.getElementById('mc');
-          const reset = document.getElementById("reset");
+        // Select the element where changes might occur
+        const targetNode = document.getElementById("mc");
+        const reset = document.getElementById("reset");
 
-          // Create a MutationObserver to detect changes
-          const observer = new MutationObserver(function(mutationsList) {
-              for (const mutation of mutationsList) {
-                  if (mutation.type === 'childList' || mutation.type === 'attributes') {
-                      // Show the message if any change is detected
-                      reset.style.display = 'block';
-                  }
-              }
-          });
+        // Create a MutationObserver to detect changes
+        const observer = new MutationObserver(function (mutationsList) {
+          for (const mutation of mutationsList) {
+            if (
+              mutation.type === "childList" ||
+              mutation.type === "attributes"
+            ) {
+              // Show the message if any change is detected
+              reset.style.display = "block";
+            }
+          }
+        });
 
-          // Options for the observer (we want to detect child node changes and attribute changes)
-          const config = { attributes: true, childList: true, subtree: true };
+        // Options for the observer (we want to detect child node changes and attribute changes)
+        const config = { attributes: true, childList: true, subtree: true };
 
-          // Start observing the target node
-          observer.observe(targetNode, config);
+        // Start observing the target node
+        observer.observe(targetNode, config);
       }
 
       // Start the timeout after 5 seconds
       setTimeout(timeout, 5000);
-
     </script>
   </body>
 </html>

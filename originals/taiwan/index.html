@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title></title>
+    <link rel="stylesheet" href="style.css" />
+    <!-- Tailwind CDN -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.0.2/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="px-8 space-y-4">
+    <h1 class="text-center text-4xl pt-4">關於台灣的死亡情況分布探析</h1>
+    <!-- 旭日圖、地圖 -->
+    <div
+      class="w-full flex flex-col justify-center items-center border-2 border-black rounded-2xl p-4"
+    >
+      <div class="flex justify-center items-center">
+        <p
+          class="bg-gradient-to-br from-slate-50 to-blue-50 rounded-lg shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300"
+        >
+          根據內政統計查詢網的資料，我們獲取到了台灣從83年到112年的死亡資料<br />
+          我們依照地區別北中東南外，分析了各區與縣市的死亡佔台灣總死亡的比例<br />
+          我們使用旭日圖來呈現，從所繪製出的圖，可以發現北部的死亡人數佔比最高<br />
+          我們也可以發現佔據較大區塊的大多是直轄市，符合台灣的人口結構分布<br />
+          <br />
+          *分母是台灣的總死亡人數，分子是縣市的死亡人數(平均)<br />
+          *死亡人數是計算83年~112年的平均值<br />
+        </p>
+        <div class="">
+          <div id="sunburstDiv"></div>
+        </div>
+      </div>
+      <div class="flex justify-center items-center">
+        <div class="flex flex-col justify-center items-center">
+          <div id="animationMapDiv"></div>
+          <p>動畫：83~112年各縣市死亡人數分布(逐年)</p>
+        </div>
+        <div class="flex flex-col justify-center items-center">
+          <div id="animationMapDiv2"></div>
+          <p>動畫：83~112年各縣市死亡人數分布(逐年逐月)</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 箱型圖 -->
+    <div
+      class="w-full flex justify-center items-center border-2 border-black rounded-2xl p-4"
+    >
+      <div class="flex flex-col justify-center items-center">
+        <div id="boxPlotDiv"></div>
+        <div class="flex space-x-4">
+          <div
+            class="w-16 h-auto bg-blue-200 rounded-xl p-2 flex justify-center items-center"
+          >
+            <button onclick="drawBoxPlot('全')" class="">全體</button>
+          </div>
+          <div
+            class="w-16 h-auto bg-blue-200 rounded-xl p-2 flex justify-center items-center"
+          >
+            <button onclick="drawBoxPlot('男')" class="">男</button>
+          </div>
+          <div
+            class="w-16 h-auto bg-blue-200 rounded-xl p-2 flex justify-center items-center"
+          >
+            <button onclick="drawBoxPlot('女')" class="">女</button>
+          </div>
+        </div>
+      </div>
+      <p
+        class="bg-gradient-to-br from-slate-50 to-blue-50 rounded-lg shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300"
+      >
+        我們將83~112每月的各縣市死亡人數繪製成箱型圖。<br />
+        我們可以發現在台灣一年之中，三月的死亡人數明顯高出許多。<br />
+        不論是最大值、最小值、中位數、還是四分位數，三月都是最高的。<br />
+        <br />
+        *原因不明？<br />
+        *有人說是123月天氣冷，溫差變化大<br />
+      </p>
+    </div>
+
+    <!-- 熱力圖 -->
+    <div
+      class="w-full flex justify-center items-center border-2 border-black rounded-2xl p-4"
+    >
+      <p
+        class="bg-gradient-to-br from-slate-50 to-blue-50 rounded-lg shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300"
+      >
+        我們也再次用月來分析，將各縣市死亡人數(平均)繪製成熱圖<br />
+        縣市由左至右(或由上到下)大致上以台灣北到南排序<br />
+        這張圖也可以看到新北市、台北市、台中市、台南市、高雄市特別明顯<br />
+        切換成3D模式可以看到，趨勢大致照著台灣的人口分布結構<br />
+        <br />
+        *死亡人數是83年到112年的平均值<br />
+        *離島區域放在南部之後<br />
+      </p>
+      <div class="flex flex-col justify-center items-center">
+        <div id="heatPlotDiv"></div>
+        <div class="flex space-x-4">
+          <div
+            class="w-16 h-auto bg-blue-200 rounded-xl p-2 flex justify-center items-center"
+          >
+            <button onclick="drawHeatMap('全')" class="">全體</button>
+          </div>
+          <div
+            class="w-16 h-auto bg-blue-200 rounded-xl p-2 flex justify-center items-center"
+          >
+            <button onclick="drawHeatMap('男')" class="">男</button>
+          </div>
+          <div
+            class="w-16 h-auto bg-blue-200 rounded-xl p-2 flex justify-center items-center"
+          >
+            <button onclick="drawHeatMap('女')" class="">女</button>
+          </div>
+          <div
+            class="w-32 h-auto bg-blue-200 rounded-xl p-2 flex justify-center items-center"
+          >
+            <button onclick="toggleHeatMapMode()" class="">切換 2D/3D</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="text-center text-2xl pt-4 pb-4">
+      接著，我們好奇死亡的人都去哪裡了，剛好內政部也有統計這些資料
+    </h2>
+
+    <div
+      class="w-full flex flex-col justify-center items-center border-2 border-black rounded-2xl p-4"
+    >
+      <p
+        class="bg-gradient-to-br from-slate-50 to-blue-50 rounded-lg shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300"
+      >
+        因為有些資料缺失，所以使用96年到112年的數據<br />
+        左圖是殯儀館處理人數與總死亡數的長條圖<br />
+        右圖是將 殯儀館處理人數/總死亡數 繪製成的折線圖<br />
+        我們可以觀察到，總死亡數與殯儀館的處理人數幾乎是逐年增加<br />
+        而且，殯儀館處理人數/總死亡數的比例也幾乎是逐年增加<br />
+        這代表，台灣的死亡人數逐年增加，而且殯儀館的處理能力也在增加<br />
+        也代表台灣對於人死後的處理，越來越在意？<br />
+      </p>
+      <div class="flex justify-center items-center pt-4">
+        <div id="barChartDiv"></div>
+        <div id="lineChartDiv3"></div>
+      </div>
+    </div>
+
+    <div
+      class="w-full flex flex-col justify-center items-center border-2 border-black rounded-2xl p-4"
+    >
+      <p
+        class="bg-gradient-to-br from-slate-50 to-blue-50 rounded-lg shadow-lg border border-gray-100 p-6 hover:shadow-xl transition-all duration-300"
+      >
+        隨著環保意識意識的提高，越來越多人選擇環保葬<br />
+        資料集中環保葬細分為公園綠地、海洋、樹葬<br />
+        左圖我們將96年到112年的火化與環保葬人數製成折線圖<br />
+        右圖我們移除火化，只留下環保葬人數製成折線圖<br />
+        我們可以看到，環保葬的人數逐年增加<br />
+        在104年，環保葬的人數突然銳增，隨後下降，但整體還是上升趨勢<br />
+        <br />
+        *經Google該年前後政府大推，還發鼓勵金<br />
+      </p>
+      <div class="flex justify-center items-center pt-4">
+        <div id="lineChartDiv"></div>
+        <div id="lineChartDiv2"></div>
+      </div>
+    </div>
+
+    <!-- 棄用圓餅圖 -->
+    <div
+      class="w-32 h-auto bg-blue-200 rounded-xl p-2 flex justify-center items-center mx-auto"
+    >
+      <button onclick="toggleDiscardedContent()">打開棄用內容</button>
+    </div>
+    <div id="discardedContainer" class="hidden">
+      <div
+        class="flex flex-col justify-center items-center border-2 border-black rounded-2xl"
+      >
+        <p class="pb-12">
+          這東西當初想的時候沒想好用圓餅圖不太恰當<br />
+          UI也不太好看做的很難用，所以就放著好看而已<br />
+          但我貼了很久了我不想刪掉所以放著<br />
+        </p>
+        <select id="genderSelect" onchange="updatePieChart()">
+          <option value="全">全體</option>
+          <option value="男">男</option>
+          <option value="女">女</option>
+        </select>
+        <div class="flex flex-wrap space-x-4">
+          <label
+            ><input
+              type="checkbox"
+              name="year"
+              value="平均"
+              onchange="updatePieChart()"
+            />
+            平均</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="year"
+              value="83"
+              onchange="updatePieChart()"
+            />
+            83年</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="year"
+              value="84"
+              onchange="updatePieChart()"
+            />
+            84年</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="year"
+              value="85"
+              onchange="updatePieChart()"
+            />
+            85年</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="year"
+              value="86"
+              onchange="updatePieChart()"
+            />
+            86年</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="year"
+              value="87"
+              onchange="updatePieChart()"
+            />
+            87年</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="year"
+              value="88"
+              onchange="updatePieChart()"
+            />
+            88年</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="year"
+              value="89"
+              onchange="updatePieChart()"
+            />
+            89年</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="year"
+              value="90"
+              onchange="updatePieChart()"
+            />
+            90年</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="year"
+              value="91"
+              onchange="updatePieChart()"
+            />
+            91年</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="year"
+              value="92"
+              onchange="updatePieChart()"
+            />
+            92年</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="year"
+              value="93"
+              onchange="updatePieChart()"
+            />
+            93年</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="year"
+              value="94"
+              onchange="updatePieChart()"
+            />
+            94年</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="year"
+              value="95"
+              onchange="updatePieChart()"
+            />
+            95年</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="year"
+              value="96"
+              onchange="updatePieChart()"
+            />
+            96年</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="year"
+              value="97"
+              onchange="updatePieChart()"
+            />
+            97年</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="year"
+              value="98"
+              onchange="updatePieChart()"
+            />
+            98年</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="year"
+              value="99"
+              onchange="updatePieChart()"
+            />
+            99年</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="year"
+              value="100"
+              onchange="updatePieChart()"
+            />
+            100年</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="year"
+              value="101"
+              onchange="updatePieChart()"
+            />
+            101年</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="year"
+              value="102"
+              onchange="updatePieChart()"
+            />
+            102年</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="year"
+              value="103"
+              onchange="updatePieChart()"
+            />
+            103年</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="year"
+              value="104"
+              onchange="updatePieChart()"
+            />
+            104年</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="year"
+              value="105"
+              onchange="updatePieChart()"
+            />
+            105年</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="year"
+              value="106"
+              onchange="updatePieChart()"
+            />
+            106年</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="year"
+              value="107"
+              onchange="updatePieChart()"
+            />
+            107年</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="year"
+              value="108"
+              onchange="updatePieChart()"
+            />
+            108年</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="year"
+              value="109"
+              onchange="updatePieChart()"
+            />
+            109年</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="year"
+              value="110"
+              onchange="updatePieChart()"
+            />
+            110年</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="year"
+              value="111"
+              onchange="updatePieChart()"
+            />
+            111年</label
+          >
+          <label
+            ><input
+              type="checkbox"
+              name="year"
+              value="112"
+              onchange="updatePieChart()"
+            />
+            112年</label
+          >
+        </div>
+        <div id="pieChartDiv" class="flex w-[30%]"></div>
+      </div>
+    </div>
+
+    <div class="pb-4"></div>
+
+    <script
+      src="https://cdn.plot.ly/plotly-2.35.2.min.js"
+      charset="utf-8"
+    ></script>
+    <script src="//unpkg.com/d3"></script>
+    <script src="main.js"></script>
+  </body>
+</html>
