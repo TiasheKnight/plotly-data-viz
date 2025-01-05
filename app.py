@@ -138,6 +138,9 @@ def chart():
                 <li class="nav-item">
                 <a class="nav-link" href="/taiwan">Taiwan</a>
                 </li>
+                <li class="nav-item">
+                <a class="nav-link" href="/learn">Learn More</a>
+                </li>
             </ul>
             </div>
         </div>
@@ -235,6 +238,9 @@ def world_map():
 def taiwan():
     return render_template('taiwan.html')
 
+@app.route('/learn')
+def learn():
+    return render_template('learn_more.html')
 
 @app.route('/point-click', methods=['POST'])
 def point_click():
