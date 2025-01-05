@@ -54,7 +54,7 @@ function drawScatterPlot(res,loc='World',gender=null,ageLow=0,ageHigh=100,year=2
 
     let layout = {
         title: {
-            text: "Total Deaths in " + loc, 
+            text: "Total Deaths in " + loc+ " in 2023", 
             font: {
                 family: 'Cambria, monospace',
                 size: 18
@@ -62,7 +62,7 @@ function drawScatterPlot(res,loc='World',gender=null,ageLow=0,ageHigh=100,year=2
         }, 
         xaxis: {
             title: {
-                text: 'x Axis',
+                text: 'Year',
                 font: {
                     family: 'Cambria, monospace',
                     size: 18
@@ -71,7 +71,7 @@ function drawScatterPlot(res,loc='World',gender=null,ageLow=0,ageHigh=100,year=2
         },
         yaxis: {
             title: {
-                text: 'y Axis',
+                text: 'Deaths',
                 font: {
                     family: 'Cambria, monospace',
                     size: 18
