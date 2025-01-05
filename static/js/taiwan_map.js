@@ -2,8 +2,33 @@ Promise.all([
     d3.json("../static/json/data.json"),
     d3.json("../static/json/taiwan_geo.json")
 ]).then(function(data) {
-    draw_map(data[0], data[1]);
-}); 
+    let died_data = data[0];
+    let geo_data = data[1];
+
+    let unique_years = [...new Set(died_data.map(d => d.Period))]; // 取得所有年份
+    console.log("Available years:", unique_years);
+
+    // **找到 9900 年的台北市數據**
+    let taipei_data = died_data.find(d => d.Period === 9900 && d.Category2Title === "台北市");
+    
+    if (taipei_data) {
+        console.log("Adding 新北市 data for year 9900:", taipei_data.Val);
+
+        // **新增 9900 年的新北市數據**
+        died_data.push({
+            Category1Title: taipei_data.Category1Title,
+            Category2Title: "新北市",
+            Category3Title: taipei_data.Category3Title,
+            Category4Title: taipei_data.Category4Title,
+            Category5Title: taipei_data.Category5Title,
+            Period: 9900,
+            Val: taipei_data.Val  // 設定與台北市相同的人數
+        });
+    }
+
+    let selected_year = 11200; // 預設選擇 9600 年
+    draw_map(died_data, geo_data, selected_year);
+});
 
 function unpack(rows, key) {
     return rows.map(function(row){ 
@@ -12,30 +37,27 @@ function unpack(rows, key) {
 }
 var myPlot = document.getElementById('myGraph');
 
-function draw_map(died_data, geo_data,loc='World',gender=null,ageLow=0,ageHigh=100,year=2023) {
+function draw_map(died_data, geo_data, year=11200) {
     console.log(unpack(died_data, "Category2Title").sort());
-    let all_cities = [];
-    for (let i = 0; i < geo_data.features.length; i++) {
-        all_cities.push(geo_data.features[i].properties.COUNTYNAME);
-    }
-    console.log(all_cities.sort());
-    console.log(unpack(died_data, "Val"));
+    let filtered_data = died_data.filter(d => d.Period === year);
+
+    console.log("Filtered data:", filtered_data);
 
     let trace1 = {
         name: "",
         type: "choropleth",
         locationmode: "geojson-id",
         featureidkey: "properties.COUNTYNAME",
-        locations: unpack(died_data, "Category2Title"),
+        locations: unpack(filtered_data, "Category2Title"), // 各縣市
         geojson: geo_data,
-        z: unpack(died_data, "Val"),
+        z: unpack(filtered_data, "Val"), // 死亡數
         zmin: 0,
-        zmax: 30000,
+        zmax: 35000,
         colorscale: [
             [0, 'lightyellow'],
             [1, 'brown']
         ],
-        hovertemplate: "%{location}:" + "%{z:,}人",
+        hovertemplate: "%{location}: %{z:,}人",
         hoverlabel: {
             bgcolor: "white",
             bordercolor: "black",
@@ -48,14 +70,14 @@ function draw_map(died_data, geo_data,loc='World',gender=null,ageLow=0,ageHigh=1
     };
 
     let data = [trace1];
+
     let layout = {
         title: {
-            text: "2023 Number of deaths per county/city",
+            text: year/100+1911 + " 年各縣市人口死亡數",
             font: {
-                size: 20,
+                size: 40,
                 color: "black"
             },
-            tickformat: ",.0f",
             x: 0.5,
             y: 0.98,
         },

@@ -58,9 +58,9 @@ function Global_map(rows,loc='World',gender=null,ageLow=0,ageHigh=100,year=2023)
         type: "choropleth",
         locationmode: "country names",
         locations: Country,
-        z: Death,
+        z: Death.map(value => parseFloat(value.replace(/\s+/g, ""))), 
         zmin: 0,
-        zmax: Math.max(...Death.map(value => parseFloat(value.replace(/\s+/g, "")))), // Remove spaces and calculate max value
+        zmax: 15000,  // Remove spaces and calculate max value
         text: unpack(rows, "location"),
         autocolorscale: true,
         colorscale: "Picnic" // https://plotly.com/javascript/colorscales/

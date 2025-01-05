@@ -1,5 +1,3 @@
-
-
 function unpack(rows,key){
     return rows.map(function (row){
         return row[key];
@@ -153,42 +151,40 @@ function drawBoxPlot(res, loc='World'){
 
     Plotly.newPlot(boxPlot, data, layout);
 }
-function drawBarChart(data, value='World') {
-    let countries = [...new Set(unpack(data, 'Region, subregion, country or area *'))];
-    
-    let traces = [];
-    
-    countries.forEach(country => {
-        let countryData = data.filter(row => row['Region, subregion, country or area *'] === country);
-        
-        if (country === value) {  // Fixed condition to check against 'value'
-            // Create trace
-            let trace = {
-                mode: 'lines+markers',
-                type: 'scatter',
-                name: country,
-                x: unpack(countryData, 'Year'),
-                y: unpack(countryData, 'Total Deaths (thousands)')
-            };
-            
-            traces.push(trace);
-        }
-    });
+function drawBarChart(data, country='World',year='2023') {
+    const yearField = 'Year';
+    const countryField = 'Region, subregion, country or area *';
+    const age15Field = 'Life Expectancy at Age 15, both sexes (years)';
+    const age65Field = 'Life Expectancy at Age 65, both sexes (years)';
+    const age80Field = 'Life Expectancy at Age 80, both sexes (years)';
 
-    // Layout outside the loop
-    let layout = {
-        margin: { t: 60 },
-        xaxis: { 
-            title: 'Year'
-        },
-        yaxis: { 
-            title: 'Deaths'
-        },
-        title: 'Deaths by Country and Year in '+ value+ ' in 2023'
-    };
+    const filteredData = data.filter(
+        row => row[yearField] === year && row[countryField] === country
+    );
+    console.log(filteredData)
+    if (filteredData.length > 0) {
+        console.log('checking filteredData');
+        const age15 = parseFloat(filteredData[0][age15Field]) || 0;
+        const age65 = parseFloat(filteredData[0][age65Field]) || 0;
+        const age80 = parseFloat(filteredData[0][age80Field]) || 0;
+        // 创建 trace
+        const barTrace = {
+            x: ['Age 15', 'Age 65', 'Age 80'],
+            y: [age15, age65, age80],
+            type: 'bar',
+            marker: { color: ['gray', 'blue', 'black'] },
+            hovertemplate: '%{x}: %{y} years<extra></extra>',
+        };
 
-    // Plot the chart
-    Plotly.newPlot('Bar_chart', traces, layout);  // Ensure 'Bar_chart' is the correct ID of your plot element
+        const layout = {
+            title: `${country}-Life Expectancy at Different Ages in ${year}`,
+            xaxis: { title: 'Age Groups' },
+            yaxis: { title: 'Life Expectancy (years)' },
+            height: 400,
+        };
+            // Plot the chart
+        Plotly.newPlot('Bar_chart', [barTrace], layout); // Ensure 'Bar_chart' is the correct ID of your plot element
+        };
 }
 function drawPieChart(data, value='World') {
     let countryField = "Region, subregion, country or area *";
@@ -307,7 +303,7 @@ function drawScatterPlot(res, loc = 'World'){
         }, 
         xaxis: {
             title: {
-                text: 'x Axis',
+                text: 'Year',
                 font: {
                     family: 'Cambria, monospace',
                     size: 18
@@ -316,7 +312,7 @@ function drawScatterPlot(res, loc = 'World'){
         },
         yaxis: {
             title: {
-                text: 'y Axis',
+                text: 'Deaths',
                 font: {
                     family: 'Cambria, monospace',
                     size: 18
@@ -328,30 +324,27 @@ function drawScatterPlot(res, loc = 'World'){
 
     Plotly.newPlot(scatterPlot, data, layout);
 }
-function drawTaiwanMap(died_data, geo_data) {
+function drawTaiwanMap(died_data, geo_data, selected_year=11200) {
     console.log(unpack(died_data, "Category2Title").sort());
-    let all_cities = [];
-    for (let i = 0; i < geo_data.features.length; i++) {
-        all_cities.push(geo_data.features[i].properties.COUNTYNAME);
-    }
-    console.log(all_cities.sort());
-    console.log(unpack(died_data, "Val"));
+    let filtered_data = died_data.filter(d => d.Period === year);
+
+    console.log("Filtered data:", filtered_data);
 
     let trace1 = {
         name: "",
         type: "choropleth",
         locationmode: "geojson-id",
         featureidkey: "properties.COUNTYNAME",
-        locations: unpack(died_data, "Category2Title"),
+        locations: unpack(filtered_data, "Category2Title"), // 各縣市
         geojson: geo_data,
-        z: unpack(died_data, "Val"),
+        z: unpack(filtered_data, "Val"), // 死亡數
         zmin: 0,
-        zmax: 30000,
+        zmax: 35000,
         colorscale: [
             [0, 'lightyellow'],
             [1, 'brown']
         ],
-        hovertemplate: "%{location}:" + "%{z:,}人",
+        hovertemplate: "%{location}: %{z:,}人",
         hoverlabel: {
             bgcolor: "white",
             bordercolor: "black",
@@ -364,15 +357,14 @@ function drawTaiwanMap(died_data, geo_data) {
     };
 
     let data = [trace1];
+
     let layout = {
         title: {
-            text: "2023 Number of deaths per county/city",
+            text: year/100+1911 + " 年各縣市人口死亡數",
             font: {
-                family: 'Cambria, monospace',
-                size: 18,
+                size: 40,
                 color: "black"
             },
-            tickformat: ",.0f",
             x: 0.5,
             y: 0.98,
         },
@@ -470,9 +462,9 @@ function drawWorldMap(rows) {
         type: "choropleth",
         locationmode: "country names",
         locations: Country,
-        z: Death,
+        z: Death.map(value => parseFloat(value.replace(/\s+/g, ""))), 
         zmin: 0,
-        zmax: Math.max(...Death.map(value => parseFloat(value.replace(/\s+/g, "")))), // Remove spaces and calculate max value
+        zmax: 15000,  // Remove spaces and calculate max value
         text: unpack(rows, "location"),
         autocolorscale: true,
         colorscale: "Picnic" // https://plotly.com/javascript/colorscales/
@@ -516,14 +508,7 @@ function drawWorldMap(rows) {
         
             if (country === 'China, Taiwan Province of China') {
                 // Load Taiwan-specific data and draw the Taiwan map
-                Promise.all([
-                    d3.json("../static/json/data.json"),
-                    d3.json("../static/json/taiwan_geo.json")
-                ]).then(function (data) {
-                    drawTaiwanMap(data[0], data[1]);
-                }).catch(function (error) {
-                    console.error("Error loading Taiwan data:", error);
-                });
+                window.location.href = '/taiwan';
             } else {
                 // Load data for the selected country
                 Promise.all([

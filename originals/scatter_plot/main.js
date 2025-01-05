@@ -56,7 +56,7 @@ function drawLineChart(res){
 
     let layout = {
         title: {
-            text: "Total Deaths in " + loc, 
+            text: "Total Deaths in " + loc+ " in 2023", 
             font: {
                 family: 'Cambria, monospace',
                 size: 18
@@ -64,7 +64,7 @@ function drawLineChart(res){
         }, 
         xaxis: {
             title: {
-                text: 'x Axis',
+                text: 'Year',
                 font: {
                     family: 'Cambria, monospace',
                     size: 18
@@ -73,7 +73,7 @@ function drawLineChart(res){
         },
         yaxis: {
             title: {
-                text: 'y Axis',
+                text: 'Deaths',
                 font: {
                     family: 'Cambria, monospace',
                     size: 18

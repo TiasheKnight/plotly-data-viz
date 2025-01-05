@@ -135,6 +135,9 @@ def chart():
                 <li class="nav-item">
                 <a class="nav-link active" href="/chart">Chart View</a>
                 </li>
+                <li class="nav-item">
+                <a class="nav-link" href="/taiwan">Taiwan</a>
+                </li>
             </ul>
             </div>
         </div>
@@ -243,4 +246,4 @@ def point_click():
 
 # Run the app
 if __name__ == '__main__':
-    app.run(port=5001, debug=True)
+    app.run(debug=False, host='0.0.0.0', port=80)
